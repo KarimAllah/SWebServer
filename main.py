@@ -6,12 +6,22 @@ import config
 
 logger = logging.getLogger(config.SERVER_NAME)
 
-STATIC_PAGE = '''<html><head><title>TEST</title></head><body>NULL</body></html>'''
-
-HTTP_PAGE = 'HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: %s\r\n\r\n%s' % (len(STATIC_PAGE), STATIC_PAGE)
+DIR_PAGE = '<html><head><title>Current directory</title><body>%s</body></html>'
 
 def handle_connection(conn, addr):
-	conn.sendall(HTTP_PAGE)
+	files = []
+	for _file in os.listdir("."):
+		prefix = "[d]\t"
+		if os.path.isfile(_file):
+			prefix = "[f]\t"
+
+		files.append(prefix + _file)
+
+	files_str = '<br/>'.join(files)
+	page = DIR_PAGE % files_str
+	contents = 'HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: %s\r\n\r\n%s' % (len(page), page)
+
+	conn.sendall(contents)
 
 def main():
 	logger.debug("Launching ( %s ) on ( %s, %s )", config.SERVER_NAME, config.HOST, config.PORT)
