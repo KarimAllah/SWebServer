@@ -11,8 +11,10 @@ class DirectoryListing(BaseApplication):
         if request.resource.startswith("/"):
             resource = request.resource[1:]
         full_path = os.path.join(self.conf['root_dir'], resource)
-    
-        if os.path.exists(full_path):
+        
+        if not resource and not os.listdir(full_path):
+            entity = open(self.conf['index']).read()
+        elif os.path.exists(full_path):
             if os.path.isfile(full_path):
                 fp = open(full_path)
                 entity = fp.read()
@@ -49,7 +51,7 @@ class DirectoryListing(BaseApplication):
                     dir_template = open(self.conf['ls_dir']).read()
                     entity = dir_template.replace("{{directory_name}}", full_path).replace("{{file_listing}}", '<br>'.join(files))
         else:
-            entity = open(self.conf['index']).read()
+            entity = open(self.conf['404']).read()
         
         response.headers['Content-length']  = len(entity)
         response.headers['Content-Type']    = content_type

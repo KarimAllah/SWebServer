@@ -15,5 +15,5 @@ class BaseApplication(object):
                 '404'       : 'templates/404.html',
                 'index'     : 'templates/index.html',
                 'ls_dir'    : 'templates/ls_dir.html',
-                'root_dir'  : '.'
+                'root_dir'  : './test'
                 }
