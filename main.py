@@ -1,6 +1,7 @@
 import os
 import socket
 import logging
+import mimetypes
 
 import config
 import http_lib
@@ -38,6 +39,7 @@ def handle_connection(conn, addr):
 	if resource.startswith("/"):
 		resource = resource[1:]
 	full_path = os.path.join(config.ROOT_DIR, resource)
+	content_type, _ = mimetypes.guess_type(full_path)
 
 	if os.path.exists(full_path):
 		if os.path.isfile(full_path):
@@ -64,7 +66,7 @@ def handle_connection(conn, addr):
 		entity = INDEX
 
 	response = http_lib.HTTP_VERSION_STR
-	response += ' 200 OK\r\nConnection: close\r\nContent-Length: %s\r\n\r\n%s' % (len(entity), entity)
+	response += ' 200 OK\r\nConnection: close\r\nContent-Length: %s\r\nContent-Type: %s\r\n\r\n%s' % (len(entity), content_type, entity)
 	conn.sendall(response)
 
 
