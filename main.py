@@ -48,25 +48,35 @@ def handle_connection(conn, addr):
 			entity = fp.read()
 			fp.close()
 		elif os.path.isdir(full_path):
-			files = []
-			if resource:
-				if resource.endswith("/"):
-					files.append("[d]\t<a href='%s'>%s</a>" % ("..", "(UP)"))
-				else:
-					files.append("[d]\t<a href='%s'>%s</a>" % (".", "(UP)"))
+			index_file = os.path.join(full_path, "index.htm")
+			if os.path.isfile(index_file):
+				fp = open(index_file)
+				entity = fp.read()
+				fp.close()
+			elif os.path.isfile(index_file + "l"):
+				fp = open(index_file + "l")
+				entity = fp.read()
+				fp.close()
+			else:
+				files = []
+				if resource:
+					if resource.endswith("/"):
+						files.append("[d]\t<a href='%s'>%s</a>" % ("..", "(UP)"))
+					else:
+						files.append("[d]\t<a href='%s'>%s</a>" % (".", "(UP)"))
 
-			parent_resource = resource.rsplit("/", 1)[-1]
-			for _file in os.listdir(full_path):
-				prefix = "[d]\t"
-				cur_path = os.path.join(full_path, _file)
+				parent_resource = resource.rsplit("/", 1)[-1]
+				for _file in os.listdir(full_path):
+					prefix = "[d]\t"
+					cur_path = os.path.join(full_path, _file)
 
-				if os.path.isfile(cur_path):
-					prefix = "[f]\t"
+					if os.path.isfile(cur_path):
+						prefix = "[f]\t"
 
-				file_name = _file if resource.endswith("/") else "/".join([parent_resource, _file])
-				files.append(prefix + "<a href='%s'>%s</a>" % (file_name, _file))
+					file_name = _file if resource.endswith("/") else "/".join([parent_resource, _file])
+					files.append(prefix + "<a href='%s'>%s</a>" % (file_name, _file))
 
-			entity = DIR_TEMPLATE % (full_path, '<br>'.join(files))
+				entity = DIR_TEMPLATE % (full_path, '<br>'.join(files))
 	else:
 		entity = INDEX
 
