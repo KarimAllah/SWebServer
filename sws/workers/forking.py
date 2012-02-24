@@ -22,11 +22,13 @@ class ForkingDispatcher(RequestDispatcher):
         logger.debug("Received connection from %s", addr)
         pid = os.fork()
         if not pid:
-            # close this listening socket as early as possible
-            self.socket.close()
-            self.app.handle(conn, addr)
-            conn.close()
-            sys.exit(0)
+            try:
+                # close this listening socket as early as possible
+                self.socket.close()
+                self.app.handle(conn, addr)
+            finally:
+                conn.close()
+                sys.exit(0)
 
     def stop(self):
         self.socket.close()

@@ -10,10 +10,10 @@ class DirectoryListing(BaseApplication):
         content_type, _ = mimetypes.guess_type(request.resource)
         if request.resource.startswith("/"):
             resource = request.resource[1:]
-        full_path = os.path.join(self.conf['root_dir'], resource)
+        full_path = os.path.join(self.conf.root_dir, resource)
         
         if not resource and not os.listdir(full_path):
-            entity = open(self.conf['index']).read()
+            entity = open(self.conf.index).read()
         elif os.path.exists(full_path):
             if os.path.isfile(full_path):
                 fp = open(full_path)
@@ -48,7 +48,7 @@ class DirectoryListing(BaseApplication):
                         file_name = _file if resource.endswith("/") else "/".join([parent_resource, _file])
                         files.append(prefix + "<a href='%s'>%s</a>" % (file_name, _file))
     
-                    dir_template = open(self.conf['ls_dir']).read()
+                    dir_template = open(self.conf.ls_dir).read()
                     entity = dir_template.replace("{{directory_name}}", full_path).replace("{{file_listing}}", '<br>'.join(files))
         else:
             entity = open(self.conf['404']).read()
