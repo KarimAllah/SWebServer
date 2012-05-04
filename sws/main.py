@@ -1,8 +1,10 @@
 import logging
 
 from sws import config
+from sws.apps.eor import NoopApp
 from sws.apps.diretories import DirectoryListing
-from sws.workers.forking import ForkingDispatcher
+from sws.workers.fork import ForkingDispatcher
+from sws.workers.thread import ThreadingDispatcher
 
 logger = logging.getLogger(config.SERVER_NAME)
 

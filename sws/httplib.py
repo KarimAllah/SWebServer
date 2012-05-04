@@ -128,7 +128,7 @@ class HTTPResponse(object):
 	def send_response(self):
 		if 'Content-length' not in self.headers:
 			self.headers['Content-length'] = len(self.body)
-		response = self.status_line + '\r\n' + str(self.headers) + '\r\n\r\n' + self.body
+		response = (self.status_line or '') + '\r\n' + str(self.headers) + '\r\n\r\n' + (self.body or '')
 		self.conn.sendall(response)
 
 if __name__ == "__main__":
